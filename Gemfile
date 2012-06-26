@@ -8,7 +8,7 @@ gem 'bcrypt-ruby', '3.0.1'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 group :assets do
-  gem 'sqlite3', '1.3.5'
+  gem 'sqlite3', '1.3.6'
   gem 'rspec-rails', '2.10.0'
   gem 'guard-rspec', '0.5.5'
   gem 'annotate', '~> 2.4.1.beta'
@@ -40,9 +40,9 @@ group :test do
 
 end
 
-#group :production do
- # gem 'pg', '0.12.2'
-#end
+group :production do
+  gem 'pg', '0.12.2'
+end
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
