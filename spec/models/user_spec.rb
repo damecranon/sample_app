@@ -107,5 +107,10 @@ describe User do
     it { should_not == user_for_invalid_password}
     specify { user_for_invalid_password.should be_false}
   end
+
+  describe "remember token" do
+    before { @user.save }
+    its(:remember_token) { should_not be_blank }
+  end
   #pending "add some examples to (or delete) #{__FILE__}"
 end
