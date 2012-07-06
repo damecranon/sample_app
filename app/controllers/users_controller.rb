@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
-  before_filter :signed_in_user, only: [:edit, :update]
+  before_filter :signed_in_user, only: [:index, :edit, :update]
   before_filter :correct_user,   only: [:edit, :update]
+  before_filter :admin_user,     only: :destroy
 
   def show
     @user = User.find(params[:id])
@@ -12,14 +13,13 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(params[:user])
-    if @user.save
-      sign_in @user
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to @user
-       # Handle a successful save.
-    else
-      render 'new'
+    @user = User.find_by_email(params[:session][:email])
+      if user && user.authenticate(params[:session][:password])
+        sign_in user
+        redirect_back_or user
+      else
+        flash.now[:error] = 'Invalid email/password combination'
+        render 'new'
     end
   end
   def edit
@@ -38,14 +38,32 @@ class UsersController < ApplicationController
     end
   end
 
+  def index
+    @users = User.paginate(page: params[:page])
+  end
+
+  def destroy
+    User.find(params[:id]).destroy
+    flash[:success] = "User destroyed"
+    redirect_to users_path
+  end
+
   private
 
     def signed_in_user
-      redirect_to signin_path, notice: "Please sign in." unless signed_in?
+       unless signed_in?
+         store_location
+         redirect_to signin_path, notice: "Please sign in." unless signed_in?
+       end
     end
 
     def correct_user
       @user = User.find(params[:id])
       redirect_to(root_path) unless current_user?(@user)
     end
+
+    def admin_user
+      redirect_to(root_path) unless current_user.admin?
+    end
+
 end
